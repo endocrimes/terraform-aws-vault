@@ -278,10 +278,15 @@ ui = true
 EOF
 )
 
+  # Custom: added tls_disable, tls_require_and_verify_client_cert, tls_client_ca_file
+  # TODO: wire it up so it can be fed in via the run-vault command invocation
   local -r listener_config=$(cat <<EOF
 listener "tcp" {
   address         = "0.0.0.0:$port"
   cluster_address = "0.0.0.0:$cluster_port"
+  tls_disable                        = false
+  tls_require_and_verify_client_cert = true
+  tls_client_ca_file = "/opt/vault/tls/ca.crt"
   tls_cert_file   = "$tls_cert_file"
   tls_key_file    = "$tls_key_file"
 }\n
