@@ -332,10 +332,13 @@ EOF
   else
     vault_storage_backend=$(cat <<EOF
 $consul_storage_type "consul" {
-  address = "127.0.0.1:8500"
-  path    = "vault/"
-  scheme  = "http"
-  service = "vault"
+  address = "127.0.0.1:8501"
+  path    = "vault"
+  scheme  = "https"
+
+  tls_ca_file   = "/opt/vault/tls/ca.crt"
+  tls_cert_file = "$tls_cert_file"
+  tls_key_file  = "$tls_key_file"
 }
 # HA settings
 cluster_addr  = "https://$instance_ip_address:$cluster_port"
