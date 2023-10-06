@@ -248,6 +248,7 @@ function generate_vault_config {
   local -r auto_unseal_kms_key_id="${17}"
   local -r auto_unseal_kms_key_region="${18}"
   local -r auto_unseal_endpoint="${19}"
+  local -r vault_verify_mtls="${20}"
   local -r config_path="$config_dir/$VAULT_CONFIG_FILE"
 
   local instance_ip_address
@@ -284,8 +285,7 @@ EOF
 listener "tcp" {
   address         = "0.0.0.0:$port"
   cluster_address = "0.0.0.0:$cluster_port"
-  tls_disable                        = false
-  tls_require_and_verify_client_cert = true
+  tls_require_and_verify_client_cert = $vault_verify_mtls
   tls_client_ca_file = "/opt/vault/tls/ca.crt"
   tls_cert_file   = "$tls_cert_file"
   tls_key_file    = "$tls_key_file"
@@ -490,6 +490,7 @@ function run {
   local auto_unseal_kms_key_id=""
   local auto_unseal_kms_key_region=""
   local auto_unseal_endpoint=""
+  local verify_mtls="false"
   local all_args=()
 
   while [[ $# > 0 ]]; do
@@ -644,6 +645,10 @@ function run {
         auto_unseal_endpoint="$2"
         shift
         ;;
+      --verify-mtls)
+        verify_mtls="$2"
+        shift
+        ;;
       --help)
         print_usage
         exit
@@ -752,7 +757,8 @@ function run {
         "$enable_auto_unseal" \
         "$auto_unseal_kms_key_id" \
         "$auto_unseal_kms_key_region" \
-        "$auto_unseal_endpoint"
+        "$auto_unseal_endpoint" \
+        "$verify_mtls"
     fi
   fi
 
